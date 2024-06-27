@@ -4,32 +4,47 @@ using System.Net.Sockets;
 
 namespace TCPIPServerTest
 {
-    class Client
+    public class Client
     {
         TcpClient tcpClient;
-        Client(TcpClient tcpClient)
+        StreamWriter sw;
+        StreamReader sr;
+
+		public Client(TcpClient tcpClient)
         {
             this.tcpClient = tcpClient;
         }
         public void run()
         {
-            StreamWriter sw = new StreamWriter(tcpClient.GetStream());
-            StreamReader sr = new StreamReader(tcpClient.GetStream());
+            sw = new StreamWriter(tcpClient.GetStream());
+            sr = new StreamReader(tcpClient.GetStream());
             while (true)
             {
                 try
                 {
-                    string str = sr.ReadLine();
-                    sw.WriteLine($"Server: ${str}");
-                    sw.Flush();
+                    if (!Program.serverEnd)
+                    {
+                        string str = sr.ReadLine();
+                        sw.WriteLine($"Server: ${str}");
+                        sw.Flush();
+                    } else
+                    {
+                        Close();
+                        break;
+                    }
                 }
                 catch
                 {
-                    sr.Close();
-                    sw.Close();
-                    tcpClient.Close();
+                    Close();
                 }
             }
+        }
+
+        void Close()
+        {
+            sr.Dispose();
+            sw.Dispose();
+            tcpClient.Dispose();
         }
     }
 }

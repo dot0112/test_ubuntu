@@ -6,24 +6,29 @@ using System.Threading;
 
 namespace TCPIPServerTest
 {
-    class ClientHandler
+    public class ClientHandler
     {
-        static TcpListener tcpListener;
-        static bool serverClose = false;
-        ClientHandler (TcpListener tcpListener) {
+        TcpListener tcpListener;
+        public ClientHandler (TcpListener tcpListener) {
             this.tcpListener = tcpListener;
         }
 
-        void run() {
+        public void run() {
             while(true) {
                 try {
-                    TcpClient tcpClient = tcpListener.AcceptTcpClient();
-                    Console.WriteLine("" + tcpClient.Connected);
-                    Client c = new Client(tcpClient);
-                    Thread th = new Thread(c.run);
-                    th.Start();
-                }catch(exception e) {
-                    Console.WriteLine(e.stackTrace());
+                    if (!Program.serverEnd)
+                    {
+                        TcpClient tcpClient = tcpListener.AcceptTcpClient();
+                        Console.WriteLine("" + tcpClient.Connected);
+                        Client c = new(tcpClient);
+                        Thread th = new Thread(c.run);
+                        th.Start();
+                    } else
+                    {
+                        break;
+                    }
+                }catch {
+                   break;
                 }
             }
         }
