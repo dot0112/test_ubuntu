@@ -18,6 +18,7 @@ namespace TCPIPServerTest
         {
             sw = new StreamWriter(tcpClient.GetStream());
             sr = new StreamReader(tcpClient.GetStream());
+            Console.WriteLine("Client Connect...");
             while (true)
             {
                 try
